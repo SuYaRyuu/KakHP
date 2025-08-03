@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORTUNE | かけるの公式ホームページ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@400;700&family=Kaisei+Decol&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --primary-color: #1a1a1a;
+            --secondary-color: #242424;
+            --accent-color: #00ffff;
+            --accent-color-darker: #00cccc;
+            --text-color: #e0e0e0;
+            --text-color-dark: #a0a0a0;
+            --font-body: 'Noto Sans JP', sans-serif;
+            --font-display: 'Orbitron', sans-serif;
+            --font-fortune: 'Kaisei Decol', serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; position: relative; }
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
+        #page-transition-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; opacity: 0; z-index: 9999; pointer-events: none; transition: opacity 0.5s ease-in-out; }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end; /* 右寄せ */
+            align-items: center;
+            z-index: 1002; /* 修正: メニューより上に表示 */
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        .menu-toggle { width: 30px; height: 24px; position: relative; cursor: pointer; z-index: 1002; background: none; border: none; }
+        .menu-toggle span { display: block; position: absolute; width: 100%; height: 3px; background-color: var(--accent-color); border-radius: 3px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 0 8px var(--accent-color); }
+        .menu-toggle span:nth-child(1) { top: 0; }
+        .menu-toggle span:nth-child(2) { top: 10px; }
+        .menu-toggle span:nth-child(3) { bottom: 0; }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(7px, 7px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(8px, -8px); }
+        
+        .nav-menu { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background-color: rgba(18, 18, 18, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; clip-path: circle(0% at 100% 0); transition: clip-path 0.6s cubic-bezier(0.77, 0, 0.175, 1); z-index: 1001; }
+        .nav-menu.active { clip-path: circle(150% at 100% 0); }
+        .nav-menu ul { list-style: none; text-align: center; }
+        .nav-menu li { margin: 30px 0; transform: translateY(20px); opacity: 0; transition: transform 0.5s ease, opacity 0.5s ease; }
+        .nav-menu.active li { transform: translateY(0); opacity: 1; }
+        .nav-menu.active li:nth-child(1) { transition-delay: 0.2s; }
+        .nav-menu.active li:nth-child(2) { transition-delay: 0.3s; }
+        .nav-menu.active li:nth-child(3) { transition-delay: 0.4s; }
+        .nav-menu.active li:nth-child(4) { transition-delay: 0.5s; }
+        .nav-menu a { color: var(--text-color); text-decoration: none; font-size: 2.5rem; font-family: var(--font-display); padding: 10px 20px; position: relative; transition: color 0.3s ease; }
+        .nav-menu a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 50%; background-color: var(--accent-color); transition: all 0.3s ease-out; transform: translateX(-50%); box-shadow: 0 0 10px var(--accent-color); }
+        .nav-menu a:hover { color: var(--accent-color); }
+        .nav-menu a:hover::after { width: 100%; }
+        
+        .main-content { padding: 100px 20px 40px; max-width: 900px; margin: 0 auto; animation: fadeIn 1s ease-out; text-align: center; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-title { font-family: var(--font-display); font-size: 3rem; color: var(--accent-color); text-shadow: 0 0 15px var(--accent-color); margin-bottom: 30px; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; } to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00cccc, 0 0 40px #00cccc; } }
+        .fortune-container { perspective: 1000px; }
+        .fortune-card { width: 100%; max-width: 500px; margin: 0 auto 30px; min-height: 300px; position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fortune-card.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; border-radius: 15px; border: 1px solid rgba(0, 255, 255, 0.2); }
+        .card-front { background: var(--secondary-color); font-family: var(--font-fortune); font-size: 2rem; }
+        .card-front p { font-size: 1rem; margin-top: 1rem; color: var(--text-color-dark); font-family: var(--font-body); }
+        .card-back { background: var(--primary-color); transform: rotateY(180deg); }
+        #fortune-result-name { font-family: var(--font-fortune); font-size: 3rem; writing-mode: vertical-rl; text-orientation: upright; border: 3px solid var(--accent-color); padding: 20px 10px; border-radius: 10px; margin-right: 20px; color: var(--accent-color); text-shadow: 0 0 10px var(--accent-color); }
+        .result-content { display: flex; align-items: center; }
+        #fortune-result-message { text-align: left; font-size: 1.1rem; line-height: 1.8; color: var(--text-color); }
+        .draw-button { font-family: var(--font-display); font-size: 1.2rem; padding: 15px 40px; border: 2px solid var(--accent-color); background-color: transparent; color: var(--accent-color); border-radius: 50px; cursor: pointer; transition: all 0.3s ease; text-shadow: 0 0 5px var(--accent-color); box-shadow: 0 0 10px var(--accent-color) inset, 0 0 10px var(--accent-color); }
+        .draw-button:hover { background-color: var(--accent-color); color: var(--bg-color); box-shadow: 0 0 20px var(--accent-color), 0 0 30px var(--accent-color); transform: scale(1.05); }
+        .draw-button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 768px) {
+            .nav-menu a { font-size: 2rem; }
+            .main-content { padding-top: 80px; }
+            .page-title { font-size: 2.5rem; }
+            .card-face { padding: 20px; }
+            .result-content { flex-direction: column; }
+            #fortune-result-name { writing-mode: horizontal-tb; margin-right: 0; margin-bottom: 20px; padding: 10px 20px; font-size: 2.5rem; }
+            #fortune-result-message { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="page-transition-overlay"></div>
+
+    <header class="header">
+        <button class="menu-toggle" aria-label="メニューを開閉">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="index.html" class="nav-link">HOME</a></li>
+            <li><a href="profile.html" class="nav-link">PROFILE</a></li>
+            <li><a href="account.html" class="nav-link">ACCOUNT</a></li>
+            <li><a href="fortune.html" class="nav-link">FORTUNE</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">今日の運勢</h1>
+        <div class="fortune-container">
+            <div class="fortune-card" id="fortune-card">
+                <div class="card-face card-front">
+                    <h2>今日の運勢を占う</h2>
+                    <p>下のボタンを押してね</p>
+                </div>
+                <div class="card-face card-back">
+                    <div class="result-content">
+                        <h2 id="fortune-result-name"></h2>
+                        <p id="fortune-result-message"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="draw-button" class="draw-button">もう一度占う</button>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            menuToggle.addEventListener('click', () => {
+                menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            const pageTransitionOverlay = document.getElementById('page-transition-overlay');
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.href === window.location.href) { e.preventDefault(); if (navMenu.classList.contains('active')) { menuToggle.classList.remove('active'); navMenu.classList.remove('active'); } return; }
+                    e.preventDefault();
+                    pageTransitionOverlay.style.opacity = '1';
+                    pageTransitionOverlay.style.pointerEvents = 'auto';
+                    setTimeout(() => { window.location.href = this.href; }, 500);
+                });
+            });
+
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    pageTransitionOverlay.style.opacity = '0';
+                    pageTransitionOverlay.style.pointerEvents = 'none';
+                }
+            });
+            
+            particlesJS('particles-js', { /* particles.jsの設定 */
+                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#00ffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" } }, "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
+            });
+
+            const fortunes = [
+                { name: '大大吉', weight: 1, messages: ["マジで神レベルの最強運！すべてに感謝しとこ！その気持ちが幸運をキープするコツだよんｗ", "願い事、ただ待ってるだけじゃもったいない！自分から動けば、ロケットスタートで叶っちゃうよ。今すぐGO！", "キミの周り、今ハッピーオーラ全開！その幸せ、独り占めしないで友達にもおすそ分けしなよ！そしたらもっといいことあるって！", "今までの苦労、マジでお疲れ！めっちゃ報われる時がきた！自分を褒めて、この幸せを思いっきり楽しんじゃえ！でも調子に乗りすぎんなよｗ", "こんなラッキー、めったにないから！運気いいからって調子に乗ってると足元すくわれるぞ。謙虚な気持ち、忘れんな！"] },
+                { name: '大吉', weight: 5, messages: ["運気イケイケ！自信もって計画実行しちゃいな！強い追い風が吹いてるぜ！", "まさかの人から助けてもらえたり、ラッキーな偶然がありそう！人との繋がり、マジ大事。「ありがとう」って言っとけば、次もラッキーが来る！", "ビビってないで何でも挑戦しなよ！キミのパワーがマックスで発揮されて、ヤバい結果に繋がるっしょ！", "心も体も絶好調！やる気満ちてるね！そのエネルギー、目標のために全部使っちゃえ！願い、叶うって！", "ちょー順調な時こそ、周りへの気配り忘れないでな。キミの成功は、みんなのおかげでもあるんだからさ！"] },
+                { name: '中吉', weight: 15, messages: ["運気は安定してて、いい感じに上昇中！ド派手じゃないけど、コツコツやればちゃんと結果出るよ。", "焦りはNG！順調な時こそ、一個一個ちゃんとやることが大事。それが未来の自分を強くするって！", "今まで頑張ってきたこと、やっとみんなに認めてもらえる時が来た！でも満足しないで、もっと上目指しちゃお！", "人間関係もいい感じ。みんなを大事にすれば、仕事もプライベートもうまくいく。ケンカはスルーが吉！", "デカい決断するのにも良いタイミング。でもちゃんと調べて準備しとけよ！その慎重さが成功の秘訣だぜ。"] },
+                { name: '小吉', weight: 20, messages: ["道端の花見て「おっ」て思うみたいに、毎日の生活に小さなハッピーが見つかる運勢。当たり前の日々に感謝な！", "デカい夢はすぐには無理かもだけど、ちっちゃい願い事は案外サクッと叶いそう。まずは身近なことからやってみ！", "派手なことより、地味で堅実な道を選ぶのが正解。コツコツやった努力が、マジでキミの力になるから。", "周りの人への優しさが、巡り巡って自分に返ってくるよ。見返りとか求めない「マジ思いやり」が大事！", "新しいこと始めるより、今あるものを磨く時期。趣味とか勉強とか深めてみ？生活がもっと楽しくなるぜ。"] },
+                { name: '吉', weight: 25, messages: ["特に何もない、平和な運気。穏やかな毎日がサイコーってやつ。現状維持でいけば、この平和は続くよ。", "無理に動かないで、流れに任せてみな。物事は自然といい感じに収まるって。", "いつもの仕事を普通にこなす。その中に安定した幸せがあるんだよね。心を落ち着かせて、自分と向き合う時間、作ってみ？", "「なんか変えたい！」って焦んなくてOK。今は、次のジャンプのためにパワーを貯める時なんだって。", "家族とかマジな親友との時間を大事にしな。そういう穏やかな関係が、キミの心の支えになるから。"] },
+                { name: '半吉', weight: 20, messages: ["運気は良くも悪くもって感じ。キミの気持ち次第で、どっちにも転ぶ。常にポジティブでいこーぜ！", "良いことと悪いことが交互に来るかも。いちいち喜んだり落ち込んだりしないで、冷静に「ふーん」って感じで受け止めな！", "何かやる前には、もう一回考える慎重さが必要。でも「今だ！」って思ったら迷わずGO！その勇気も大事。", "自分のやったことが、ブーメランみたいに全部自分に返ってくる時。良いことしてれば運気UP、サボればダウンだぜ。", "全部うまくいかなくても、「まあ半分OKならいっか！」ぐらいの心の余裕が、この時期を乗り切るカギだよん。"] },
+                { name: '末吉', weight: 15, messages: ["運気はまだ本気出してない感じ。今は我慢して、パワー貯めとけ！将来、絶対いいことあるから信じな！", "すぐ結果を求めんなよ！キミの頑張り、今は誰にも気づかれないかもだけど、神様はちゃんと見てるって！", "今は勉強の時期！将来のために知識とかスキル身につけとけば、後でマジで役に立つ。自分への投資はケチるな！", "「しんどいなー」って思うかもだけど、それはキミがレベルアップするための試練。この経験が、未来のキミを強くするぜ。", "希望の光はまだ遠いかも。でも、その光に向かって一歩ずつ進むのをやめんなよ！"] },
+                { name: '末小吉', weight: 10, messages: ["まだ運気はイマイチだけど、未来にちっちゃいご褒美が待ってるよ。焦らずその時を待ちな！", "地味で目立たない努力が、この運気を育てるんだよね。誰も見てないとこで、こっそり良いことしとけ！ｗ", "デカい変化より、今をちょっと良くするための小さな工夫をしよ。それが積み重なってくから。", "人付き合いでは、マジメな態度でいることが大事。その真心が、じわじわ信頼に繋がっていくよ。", "今は幸せのタネを蒔いてる時期。いつか花が咲くって信じて、毎日頑張ろーぜ！"] },
+                { name: '平', weight: 5, messages: ["運気のアップダウンがない、超おだやかな状態。何もない平和な毎日が、実は一番幸せなんだって気づく時。", "良くも悪くも、現状維持。今はガンガン攻める時じゃないから、静かに様子見しとくのがベスト。", "心をザワザワさせないで、静かに自分を見つめるのに良い時期。自分と向き合うと、新しい発見あるかもよ。", "面白いこと求めると、逆に調子崩すかも。「まあ、こんなもんか」って感じで、今の暮らしを大事にしな。", "次のターンに備えて、心と体を休ませる充電期間だと思っとこ！無理しないで、のんびり構えてなー。"] },
+                { name: '吉凶未分', weight: 3, messages: ["キミの運命、今まさに分かれ道！ラッキーになるかアンラッキーになるか、マジでこれからのキミ次第！", "「こうする！」って強く決めて、自分が信じる道を進め！その覚悟が、未来のドアを開けるカギになるぜ。", "周りの声に惑わされんなよ。静かなとこで自分の心とガチトークして、進むべき道を決めるんだ！", "今はまだ霧の中って感じ。でも、キミが良いこと重ねていけば、霧は晴れてハッピーな道が見えてくるって！", "テキトーな判断はマジでヤバい。大事な決断は後回しにするか、信頼できるダチに相談して、めっちゃ考えな！"] },
+                { name: '吉凶相半', weight: 3, messages: ["良いことも悪いこともある。マジで人生そのものみたいな運気ｗ とにかく冷静でいるのが一番大事。", "ラッキーで浮かれず、アンラッキーでへこまず。常に「ニュートラル」な心でいれば、運気の波をうまく乗りこなせるよ。", "物事には良い面と悪い面、両方あるって知る時。片方だけ見て決めつけないで、いろんな角度から見てみ。", "トラブル起きたと思ったら、まさかの助け舟が来たり、状況がコロコロ変わる。柔軟に対応できる力、つけとこ！", "人間関係も、好き嫌いが激しくなりそう。敵も味方もできやすいから、誰にでもフラットな態度でいな！"] },
+                { name: '凶後吉', weight: 8, messages: ["今は真っ暗闇に感じるかもだけど、夜明けはすぐそこ！希望を捨てないで、もうちょいだけ頑張れ！", "辛い経験は、キミをめっちゃ成長させたはず。その学びがあれば、これからの運気は絶対良くなるって！", "冬の次には春が来る！運気の流れも同じだよ。辛いことの後には、デカい喜びが待ってるぜ！", "「助けて！」って言うのをためらうな。キミのピンチを見て、手を差し伸べてくれる人が現れる兆しがあるよ。", "昔の失敗とか引きずんなよ！運気は良い方に変わってきてるから。前を向いて、新しい一歩を踏み出す勇気を持て！"] },
+                { name: '小凶', weight: 10, messages: ["思わぬとこにワナがありそう。何事も油断しないで、慎重にいけば災いは避けられるから大丈夫！", "「これくらい平気っしょｗ」って軽いノリが、小さな失敗を招く。チェックはいつもより念入りにな！", "言葉の勘違いで、人間関係にヒビが入るかも。何か言う前に、一回深呼吸して考えるクセつけよ！", "健康に黄色信号！「なんかダルいな」って思ったら、無理しないでさっさと休むのが大事だぜ。", "デカい問題じゃないけど、ちっちゃいアンラッキーが重なりそう。謙虚な気持ちで、嵐が過ぎるのを待っとこ。"] },
+                { name: '半凶', weight: 8, messages: ["運気にちょっと影が見えて、物事がスムーズに進みにくい感じ。無理やり進めようとすると、逆にヤバいことになるぞ。", "計画がうまくいかない時。一回止まって、根本から見直す勇気が必要。今はひたすら守りの姿勢でいけ！", "誘惑とかうまい話に乗りやすい時期でもある。「そんなうまい話あるわけない」って思って、超慎重にいこ。", "自分の力じゃどうにもならん壁にぶつかるかも。意地張らないで、人のアドバイスを素直に聞いとけって。", "今は攻める時じゃない！エネルギーは温存して、運気が良くなるのを静かに待つのが賢いやり方だぜ。"] },
+                { name: '末凶', weight: 5, messages: ["今は平和でも、この先に困難が待ってる暗示。ヤバそうな火種は、今のうちに見つけて消しとけ！", "物事の終わり方、マジで注意な。「終わり良ければすべて良し」って言うじゃん？最後まで気ぃ抜くなよ。", "誰かとの関係が終わるかも。でも、腐れ縁なら思い切って断ち切った方が、新しい道が開けることもあるぜ。", "将来のこと、なんとなく不安になるよな。でも今から備えとけば、いざって時に乗り越えられるから大丈夫。", "隠してた問題がバレるかも。でも誠実に向き合って、さっさと対処すればダメージは少なくて済む！"] },
+                { name: '凶', weight: 3, messages: ["運気は低迷中。マジで八方塞がりって感じ。今は新しいこと始めないで、とにかく大人しくしとく時！", "キミの言動が誤解されやすくて、トラブルになりがち。できるだけ人と関わらないで、静かに過ごすのがベスト。", "焦ったりイライラするけど、感情的になったら負け。深呼吸して、心を落ち着ける努力をしな！", "今は嵐のど真ん中。下手に動いたらボコボコにされるだけ。身をかがめて、嵐が過ぎるのを待つしかねえ！", "自分を見つめ直す良いチャンスだと思え。今までのこと反省して、心を入れ替えれば、次の運気は良くなるぜ。"] },
+                { name: '大凶', weight: 1, messages: ["うわ、マジかｗ でもこれ以上悪くはならない最悪の運勢。つまり、運気はもう底を打ったってこと！あとは上がるだけっしょ！", "何やってもダメで、マジで絶望するかも。でも、夜明け前が一番暗いんだって！希望だけは捨てんなよ！", "今は動く時じゃない。マジで何もするな！すべての活動をストップして、ひたすら静かに時が過ぎるのを待て。", "この苦しみは、キミに必要な試練なんだわ。この経験から何を学ぶか、よーく考えれば、復活の道が見えてくるぜ。", "自分を責めんなよ！運気のデカい流れには誰も逆らえないんだから。ただ静かに祈って、心をキレイに保つことだけ考えろ。絶対、光は差すから！"] }
+            ];
+
+            const drawButton = document.getElementById('draw-button');
+            const fortuneCard = document.getElementById('fortune-card');
+            const resultNameEl = document.getElementById('fortune-result-name');
+            const resultMessageEl = document.getElementById('fortune-result-message');
+            const totalWeight = fortunes.reduce((sum, fortune) => sum + fortune.weight, 0);
+
+            function drawFortune() {
+                let random = Math.random() * totalWeight;
+                let selectedFortune;
+                for (const fortune of fortunes) {
+                    if (random < fortune.weight) { selectedFortune = fortune; break; }
+                    random -= fortune.weight;
+                }
+                const selectedMessage = selectedFortune.messages[Math.floor(Math.random() * selectedFortune.messages.length)];
+                return { name: selectedFortune.name, message: selectedMessage };
+            }
+
+            function displayFortune() {
+                drawButton.disabled = true;
+                if (fortuneCard.classList.contains('is-flipped')) {
+                    fortuneCard.classList.remove('is-flipped');
+                    setTimeout(performDraw, 800);
+                } else {
+                    performDraw();
+                }
+            }
+            
+            function performDraw() {
+                const result = drawFortune();
+                resultNameEl.textContent = result.name;
+                resultMessageEl.textContent = result.message;
+                fortuneCard.classList.add('is-flipped');
+                setTimeout(() => { drawButton.disabled = false; }, 800);
+            }
+
+            drawButton.addEventListener('click', displayFortune);
+            drawButton.textContent = '今日の運勢を占う';
+            drawButton.addEventListener('click', function firstDraw() {
+                displayFortune();
+                drawButton.textContent = 'もう一度占う';
+                drawButton.removeEventListener('click', firstDraw);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>かけるの公式ホームページ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --primary-color: #1a1a1a;
+            --secondary-color: #242424;
+            --accent-color: #00ffff;
+            --accent-color-darker: #00cccc;
+            --text-color: #e0e0e0;
+            --text-color-dark: #a0a0a0;
+            --font-body: 'Noto Sans JP', sans-serif;
+            --font-display: 'Orbitron', sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; position: relative; }
+        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
+        #page-transition-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; opacity: 0; z-index: 9999; pointer-events: none; transition: opacity 0.5s ease-in-out; }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1002; /* 修正: メニューより上に表示 */
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        .marquee-container { flex-grow: 1; overflow: hidden; white-space: nowrap; margin-right: 20px; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; font-size: 14px; color: var(--accent-color); font-family: var(--font-display); text-shadow: 0 0 5px var(--accent-color); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        .menu-toggle { width: 30px; height: 24px; position: relative; cursor: pointer; z-index: 1002; background: none; border: none; flex-shrink: 0; }
+        .menu-toggle span { display: block; position: absolute; width: 100%; height: 3px; background-color: var(--accent-color); border-radius: 3px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 0 8px var(--accent-color); }
+        .menu-toggle span:nth-child(1) { top: 0; }
+        .menu-toggle span:nth-child(2) { top: 10px; }
+        .menu-toggle span:nth-child(3) { bottom: 0; }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(7px, 7px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(8px, -8px); }
+
+        .nav-menu { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background-color: rgba(18, 18, 18, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; clip-path: circle(0% at 100% 0); transition: clip-path 0.6s cubic-bezier(0.77, 0, 0.175, 1); z-index: 1001; }
+        .nav-menu.active { clip-path: circle(150% at 100% 0); }
+        .nav-menu ul { list-style: none; text-align: center; }
+        .nav-menu li { margin: 30px 0; transform: translateY(20px); opacity: 0; transition: transform 0.5s ease, opacity 0.5s ease; }
+        .nav-menu.active li { transform: translateY(0); opacity: 1; }
+        .nav-menu.active li:nth-child(1) { transition-delay: 0.2s; }
+        .nav-menu.active li:nth-child(2) { transition-delay: 0.3s; }
+        .nav-menu.active li:nth-child(3) { transition-delay: 0.4s; }
+        .nav-menu.active li:nth-child(4) { transition-delay: 0.5s; }
+        .nav-menu a { color: var(--text-color); text-decoration: none; font-size: 2.5rem; font-family: var(--font-display); padding: 10px 20px; position: relative; transition: color 0.3s ease; }
+        .nav-menu a::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 50%; background-color: var(--accent-color); transition: all 0.3s ease-out; transform: translateX(-50%); box-shadow: 0 0 10px var(--accent-color); }
+        .nav-menu a:hover { color: var(--accent-color); }
+        .nav-menu a:hover::after { width: 100%; }
+
+        .main-content { padding: 100px 20px 40px; max-width: 900px; margin: 0 auto; text-align: center; animation: fadeIn 1s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .welcome-title { font-family: var(--font-display); font-size: 2.5rem; color: var(--accent-color); text-shadow: 0 0 15px var(--accent-color); margin-bottom: 20px; animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; } to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00cccc, 0 0 40px #00cccc; } }
+        .time-container { background-color: var(--secondary-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(0, 255, 255, 0.1); margin: 30px 0; }
+        #greeting { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+        #clock { font-family: var(--font-display); font-size: 2rem; letter-spacing: 3px; }
+        .info-text { margin-top: 30px; font-size: 1rem; color: var(--text-color-dark); line-height: 1.8; }
+
+        @media (max-width: 768px) {
+            .header { padding: 15px; }
+            /* 修正: スマホでも流れる文字を表示するため、display:noneを削除 */
+            .nav-menu a { font-size: 2rem; }
+            .main-content { padding-top: 80px; }
+            .welcome-title { font-size: 2rem; }
+            #greeting { font-size: 1.2rem; }
+            #clock { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="page-transition-overlay"></div>
+
+    <header class="header">
+        <div class="marquee-container">
+            <p class="marquee-text">ここはかけるの公式ホームページです！見に来てくれてありがとう！良ければいろいろ見ていってね！</p>
+        </div>
+        <button class="menu-toggle" aria-label="メニューを開閉">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="index.html" class="nav-link">HOME</a></li>
+            <li><a href="profile.html" class="nav-link">PROFILE</a></li>
+            <li><a href="account.html" class="nav-link">ACCOUNT</a></li>
+            <li><a href="fortune.html" class="nav-link">FORTUNE</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="welcome-title">かけるのホームページへようこそ！</h1>
+        <div class="time-container">
+            <p id="greeting"></p>
+            <p id="clock"></p>
+        </div>
+        <p class="info-text">
+            右上のメニューから他のページに移動できます！<br>
+            ぜひいろいろ見ていってください！<br>
+            ウェブページのバグとかがあったら、Scratchのコメント欄とかで教えてください！
+        </p>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            menuToggle.addEventListener('click', () => {
+                menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            const pageTransitionOverlay = document.getElementById('page-transition-overlay');
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.href === window.location.href) {
+                        e.preventDefault();
+                        if (navMenu.classList.contains('active')) {
+                            menuToggle.classList.remove('active');
+                            navMenu.classList.remove('active');
+                        }
+                        return;
+                    }
+                    e.preventDefault();
+                    pageTransitionOverlay.style.opacity = '1';
+                    pageTransitionOverlay.style.pointerEvents = 'auto';
+                    setTimeout(() => { window.location.href = this.href; }, 500);
+                });
+            });
+
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    pageTransitionOverlay.style.opacity = '0';
+                    pageTransitionOverlay.style.pointerEvents = 'none';
+                }
+            });
+            
+            particlesJS('particles-js', { /* particles.jsの設定 */
+                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#00ffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" } }, "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
+            });
+
+            const greetingEl = document.getElementById('greeting');
+            const clockEl = document.getElementById('clock');
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                let greetingText = '';
+                if (hours >= 4 && hours < 10) { greetingText = 'おはようございます！'; } else if (hours >= 10 && hours < 18) { greetingText = 'こんにちは！'; } else { greetingText = 'こんばんは！'; }
+                greetingEl.textContent = greetingText;
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>
