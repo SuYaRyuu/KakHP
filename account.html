@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACCOUNTS | かけるの公式ホームページ</title>
+    <link rel="icon" href="https://uploads.scratch.mit.edu/get_image/user/156086418_90x90.png?v=">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -32,9 +33,9 @@
             width: 100%;
             padding: 15px 20px;
             display: flex;
-            justify-content: flex-end; /* 右寄せ */
+            justify-content: flex-end;
             align-items: center;
-            z-index: 1002; /* 修正: メニューより上に表示 */
+            z-index: 1002;
             background: rgba(18, 18, 18, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -147,6 +148,37 @@
             const navMenu = document.querySelector('.nav-menu');
             menuToggle.addEventListener('click', () => {
                 menuToggle.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+            
+            const pageTransitionOverlay = document.getElementById('page-transition-overlay');
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.href === window.location.href) { e.preventDefault(); if (navMenu.classList.contains('active')) { menuToggle.classList.remove('active'); navMenu.classList.remove('active'); } return; }
+                    e.preventDefault();
+                    pageTransitionOverlay.style.opacity = '1';
+                    pageTransitionOverlay.style.pointerEvents = 'auto';
+                    setTimeout(() => { window.location.href = this.href; }, 500);
+                });
+            });
+
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    pageTransitionOverlay.style.opacity = '0';
+                    pageTransitionOverlay.style.pointerEvents = 'none';
+                }
+            });
+            
+            particlesJS('particles-js', { /* particles.jsの設定 */
+                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#00ffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" } }, "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
+            });
+        });
+    </script>
+</body>
+</html>
+
+           menuToggle.classList.toggle('active');
                 navMenu.classList.toggle('active');
             });
             
