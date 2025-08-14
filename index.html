@@ -182,24 +182,3 @@
     </script>
 </body>
 </html>
-
-    });
-
-            const greetingEl = document.getElementById('greeting');
-            const clockEl = document.getElementById('clock');
-            function updateClock() {
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                let greetingText = '';
-                if (hours >= 4 && hours < 10) { greetingText = 'おはようございます！'; } else if (hours >= 10 && hours < 18) { greetingText = 'こんにちは！'; } else { greetingText = 'こんばんは！'; }
-                greetingEl.textContent = greetingText;
-                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-        });
-    </script>
-</body>
-</html>
