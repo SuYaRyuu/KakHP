@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>かけるの公式ホームページ</title>
+    <link rel="icon" href="https://uploads.scratch.mit.edu/get_image/user/156086418_90x90.png?v=">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -34,7 +35,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1002; /* 修正: メニューより上に表示 */
+            z-index: 1002;
             background: rgba(18, 18, 18, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -78,7 +79,6 @@
 
         @media (max-width: 768px) {
             .header { padding: 15px; }
-            /* 修正: スマホでも流れる文字を表示するため、display:noneを削除 */
             .nav-menu a { font-size: 2rem; }
             .main-content { padding-top: 80px; }
             .welcome-title { font-size: 2rem; }
@@ -165,6 +165,25 @@
             });
 
             const greetingEl = document.getElementById('greeting');
+            const clockEl = document.getElementById('clock');
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                let greetingText = '';
+                if (hours >= 4 && hours < 10) { greetingText = 'おはようございます！'; } else if (hours >= 10 && hours < 18) { greetingText = 'こんにちは！'; } else { greetingText = 'こんばんは！'; }
+                greetingEl.textContent = greetingText;
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>
+
+onst greetingEl = document.getElementById('greeting');
             const clockEl = document.getElementById('clock');
             function updateClock() {
                 const now = new Date();
