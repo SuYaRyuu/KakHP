@@ -112,12 +112,13 @@
         <h1 class="page-title">MY PROFILE</h1>
         <div class="profile-card">
             <div class="icon-container">
-                <img src="https://uploads.scratch.mit.edu/get_image/user/156086418_90x90.png?v=" alt="現在のアイコン">
+                <img src="https://u1.padletusercontent.com/uploads/padlet-uploads-usc1/3580687132/5f7efa6615ae06a2a14c1df5de95209d/156086418_60x60.png?token=qLd84XfefkiY6TQpucruMLGaqtqh7DmKCBBf2-2x1PHOa4TCxWwTRfDzQCyX0_7kNgo_3XiMUmkdfeAREU2_L7tV8UkN7JSqwUZFMBQnk6jVu0F-2K47sbimPY4OxvnPUXcLEfAOt4C6bTlZqkzYCONcKPVjcNwrNhy2qvAjS-bfzxJ_GCxd9l8kc6rS60QM6usQG3tC4u63fHSPOFr07TNiwByku27l0uUtzpfAiuZebUuD6glRgfGh8YaCfv7K" alt="現在のアイコン">
                 <p>現在のアイコン</p>
             </div>
             <div class="profile-section">
                 <h2>基本情報</h2>
-                <p><strong>年齢</strong>: 15歳</p>
+                <!-- ★変更点: 年齢の数字部分を <span> タグで囲み、IDを付けました -->
+                <p><strong>年齢</strong>: <span id="age"></span>歳</p>
                 <p><strong>誕生日</strong>: 8月26日</p>
                 <p><strong>血液型</strong>: O型</p>
                 <p><strong>趣味</strong>: 作詞・作曲</p>
@@ -138,6 +139,7 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- 共通スクリプト ---
             const menuToggle = document.querySelector('.menu-toggle');
             const navMenu = document.querySelector('.nav-menu');
             menuToggle.addEventListener('click', () => {
@@ -167,8 +169,38 @@
             particlesJS('particles-js', { /* particles.jsの設定 */
                 "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#00ffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" } }, "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
             });
+
+            // --- ★追加: 年齢自動計算スクリプト ---
+            function calculateAge() {
+                const birthDate = new Date(2009, 7, 26); // 2009年8月26日 (月は0から始まるので8月は7)
+                const today = new Date();
+                
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                
+                // 今年の誕生日がまだ来ていない場合は1を引く
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                
+                // HTMLの要素に計算した年齢を表示
+                document.getElementById('age').textContent = age;
+            }
+
+            // ページが読み込まれたら年齢計算を実行
+            calculateAge();
+
         });
     </script>
 </body>
 </html>
-
+           }
+            });
+            
+            particlesJS('particles-js', { /* particles.jsの設定 */
+                "particles": { "number": { "value": 80, "density": { "enable": true, "value_area": 800 } }, "color": { "value": "#00ffff" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } }, "size": { "value": 3, "random": true }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffff", "opacity": 0.4, "width": 1 }, "move": { "enable": true, "speed": 3, "direction": "none", "out_mode": "out" } }, "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } } }, "retina_detect": true
+            });
+        });
+    </script>
+</body>
+</html>
